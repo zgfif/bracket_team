@@ -1,9 +1,9 @@
-from applib.bracket import Bracket
+from applib.events import Events
 
 
 
 def main():
-    bracket = Bracket().open()
+    events = Events().open()
 
 
 
