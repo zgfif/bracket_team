@@ -14,7 +14,7 @@ class Events:
 
 
     def open(self) -> None:
-        sleep(15)
+        sleep(1)
 
 
     @property
