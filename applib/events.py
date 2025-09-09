@@ -7,6 +7,7 @@ class Events:
     URL = 'https://bracketteam.com/events'
 
 
+
     def __init__(self) -> None:
         self._driver = webdriver.Chrome()
         self._driver.get(self.URL)
@@ -15,6 +16,7 @@ class Events:
 
     def open(self) -> None:
         sleep(1)
+
 
 
     @property
