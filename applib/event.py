@@ -8,6 +8,7 @@ from selenium.common.exceptions import TimeoutException
 
 
 
+
 class Event:
     TIMEOUT = 10
 
@@ -23,7 +24,7 @@ class Event:
         Open the page and extracts data.
         """
         if not self._event_link:
-            print('no event link so return empty dict.')
+            print('No event link. So return empty dict.')
             return {}
         
         name = self._extract_name()
@@ -89,6 +90,7 @@ class Event:
         button.click()
 
         close_selector = (By.XPATH, '//*[contains(@id, "mat-dialog")]/div/div[1]/button')
+        
         try:
             close_modal_button = WebDriverWait(self._driver, self.TIMEOUT).until(
                 EC.presence_of_element_located(close_selector)
@@ -191,6 +193,11 @@ class Event:
             print('can not find back button')
             return
         
-        back_button.click()
+        try:
+            self._driver.execute_script("window.scrollTo(0, 0);")
+            back_button.click()
+        except Exception:
+            print('can not click back button')
+            return
 
             

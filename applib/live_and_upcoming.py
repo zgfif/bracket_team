@@ -17,22 +17,35 @@ class LiveAndUpcoming:
         self._driver = driver
 
 
-    def process(self) -> tuple:
+
+    def process(self) -> tuple[dict|None, ...]:
         """
         Extracts data from cards and returns it. 
         """
         data = []
-        events_links = self._collect_events_links()
-        if events_links and events_links[0]:
-            data = self._process_event_link(events_links[0])
-        else:
-            print('no event links.')
-        return tuple(data)
-    
+        
+        events_links = self._events_links_elements()
 
-    def _collect_events_links(self) -> tuple[WebElement|None, ...]:
+        for i in range(len(events_links)):
+            n = i + 1
+            nth_event_link_element = self._nth_event_link_element(n)
+            
+            if not nth_event_link_element:
+                print('could not found event link element. Stop extraction.')
+                return tuple(data)
+
+            print(f'start processing {n} event...')
+            event_data = self._process_event_link(nth_event_link_element)
+
+            data.append(event_data)
+
+        return tuple(data)
+
+
+
+    def _events_links_elements(self) -> tuple[WebElement|None, ...]:
         """
-        Return tuple of events links.
+        Return a tuple of events links.
         """
         selector = (By.CSS_SELECTOR, 'h4.tournament-info-text')
         
@@ -49,5 +62,24 @@ class LiveAndUpcoming:
 
 
     def _process_event_link(self, event_link: WebElement)  -> dict:
-        event_data = Event(driver=self._driver, event_link=event_link).extract()
-        return event_data
+        """
+        Return a dict which contains event data (name, email, sport, location).
+        """
+        return Event(driver=self._driver, event_link=event_link).extract()
+
+
+
+    def _nth_event_link_element(self, n: int) -> WebElement | None:
+        """
+        Return n-th event link element. If could not found return None.
+        """
+        selector = (By.XPATH, f"(//h4[contains(@class, 'tournament-info-text')])[{n}]")
+
+        try:
+            return WebDriverWait(self._driver, self.TIMEOUT).until(
+                EC.presence_of_element_located(selector)
+            )
+        except TimeoutException:
+            print(f'Could not found {n}th element.')
+        return None
+
