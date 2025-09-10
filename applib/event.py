@@ -5,7 +5,10 @@ from time import sleep
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-
+from applib.extracting.name import Name
+from applib.extracting.email import Email
+from applib.extracting.sport import Sport
+from applib.extracting.location import Location
 
 
 
@@ -41,11 +44,12 @@ class Event:
             'location': self._extract_location(),
         }
 
-        sleep(5)
+        sleep(3)
         
         self._back_to_cards()
 
-        sleep(5)
+        sleep(2)
+
         return data
 
 
@@ -67,7 +71,7 @@ class Event:
         """
         Return name of event.
         """
-        return self._event_link.text
+        return Name(event_link=self._event_link).extract()
 
 
 
@@ -75,48 +79,7 @@ class Event:
         """
         Return email of event.
         """
-        selector = (By.CSS_SELECTOR, "button[mattooltip='Email']")
-
-        try:
-            button = WebDriverWait(self._driver, self.TIMEOUT).until(
-                EC.presence_of_element_located(selector)
-            )
-        except TimeoutException:
-            print('Can not find email button')
-            return ''
-        
-        sleep(0.5)
-
-        button.click()
-
-        close_selector = (By.XPATH, '//*[contains(@id, "mat-dialog")]/div/div[1]/button')
-        
-        try:
-            close_modal_button = WebDriverWait(self._driver, self.TIMEOUT).until(
-                EC.presence_of_element_located(close_selector)
-            )
-        except TimeoutException:
-            print('Can not find close modal button')
-            return ''
-
-        
-        email_selector = (By.XPATH, '//*[@class="contact-data" and contains(@href, "mailto")]')
-
-        try:
-            email_element = WebDriverWait(self._driver, self.TIMEOUT).until(
-                EC.presence_of_element_located(email_selector)
-            )
-        except TimeoutException:
-            print('Can not find email element')
-            return ''
-
-        email = email_element.text       
-
-        sleep(2)
-
-        close_modal_button.click()
-
-        return email
+        return Email(driver=self._driver).extract()
 
 
 
@@ -124,21 +87,7 @@ class Event:
         """
         Return kind of sport.
         """
-        tournament_info_element = self._tournament_info_element()
-        
-        if not tournament_info_element:
-            return ''
-        
-        selector = (By.CSS_SELECTOR, "p:first-of-type")
-
-        try:
-            sport_element = WebDriverWait(tournament_info_element, self.TIMEOUT).until(
-                EC.presence_of_element_located(selector)
-            )
-        except TimeoutException:
-            print('Can not find sport element')
-            return ''
-        return  sport_element.text     
+        return Sport(driver=self._driver).extract() 
 
 
 
@@ -146,36 +95,7 @@ class Event:
         """
         Return the location of event.
         """
-        tournament_info_element = self._tournament_info_element()
-        
-        if not tournament_info_element:
-            return ''
-        
-        selector = (By.CSS_SELECTOR, "p:nth-of-type(3)")
-
-        try:
-            location_element = WebDriverWait(tournament_info_element, self.TIMEOUT).until(
-                EC.presence_of_element_located(selector)
-            )
-        except TimeoutException:
-            print('Can not find location element')
-            return ''
-        return location_element.text
-
-
-
-    def _tournament_info_element(self) -> WebElement | None:
-        """
-        Return string containing: sport, start_date - end_date and location
-        """
-        selector = (By.CSS_SELECTOR, 'div.tournament-info')
-
-        try:
-            return WebDriverWait(self._driver, self.TIMEOUT).until(
-                EC.presence_of_element_located(selector)
-            )
-        except TimeoutException:
-            print('Can not find tournament info element')
+        return Location(driver=self._driver).extract()
 
 
 
@@ -183,21 +103,32 @@ class Event:
         """
         Return browser to previous page.
         """
-        selector = (By.CSS_SELECTOR, 'button.back-button')
+        back_button_element = self._back_button_element()
+        
+        if not back_button_element:
+            return
 
         try:
-            back_button = WebDriverWait(self._driver, self.TIMEOUT).until(
-                EC.presence_of_element_located(selector)
-            )
-        except TimeoutException:
-            print('can not find back button')
-            return
-        
-        try:
             self._driver.execute_script("window.scrollTo(0, 0);")
-            back_button.click()
+            back_button_element.click()
         except Exception:
             print('can not click back button')
             return
+
+
+
+    def _back_button_element(self) -> WebElement | None:
+        """
+        Return back button element. If could not found element - return None.
+        """
+        selector = (By.CSS_SELECTOR, 'button.back-button')
+
+        try:
+            return WebDriverWait(self._driver, self.TIMEOUT).until(
+                EC.presence_of_element_located(selector)
+            )
+        except TimeoutException:
+            print('Could not found back button element.')
+            return None
 
             

@@ -3,9 +3,10 @@ from time import sleep
 from applib.chrome_options import ChromeOptions
 
 
+
+
 class Events:
     URL = 'https://bracketteam.com/events'
-
 
 
     def __init__(self) -> None:
