@@ -21,6 +21,13 @@ class Filter:
               end_date: str) -> None:
         """
         Apply filter for events.
+        Args:
+            published (bool): is published event? (True or False);
+            sport (str): possible values [None, Baseball, Basketball, Cornhole, Football, 
+                                         Lacrosse, Soccer, Softball, Volleyball, Other];
+            start_date: (str): has format mm/dd/yyyy ;
+            end_date: (str): has format mm/dd/yyyy .
+
         """
         # open filter menu:
         mat_expansion_panel_header_element = self._mat_expansion_panel_header_element()

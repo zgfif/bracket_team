@@ -30,7 +30,7 @@ class BaseTournamentSection:
 
         try:
             return WebDriverWait(tournament_info_element, self.TIMEOUT).until(
-                EC.presence_of_element_located(selector)
+                EC.visibility_of_element_located(selector)
             )
         except TimeoutException:
             print(f'Could not found {nth}th section element')
@@ -46,7 +46,7 @@ class BaseTournamentSection:
 
         try:
             return WebDriverWait(self._driver, self.TIMEOUT).until(
-                EC.presence_of_element_located(selector)
+                EC.visibility_of_element_located(selector)
             )
         except TimeoutException:
             print('Can not find tournament info element')

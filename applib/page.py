@@ -2,7 +2,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from applib.event import Event
-from time import sleep
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -10,7 +9,7 @@ from selenium.common.exceptions import TimeoutException
 
 
 
-class LiveAndUpcoming:
+class Page:
     TIMEOUT = 10
 
     def __init__(self, driver: WebDriver) -> None:
@@ -18,7 +17,7 @@ class LiveAndUpcoming:
 
 
 
-    def process(self) -> tuple[dict|None, ...]:
+    def process(self) -> tuple[tuple, ...]:
         """
         Extracts data from cards and returns it. 
         """

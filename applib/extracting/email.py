@@ -62,7 +62,7 @@ class Email:
 
         try:
             return WebDriverWait(self._driver, self.TIMEOUT).until(
-                EC.presence_of_element_located(selector)
+                EC.element_to_be_clickable(selector)
             )
         except TimeoutException:
             print('Can not find email button element')
@@ -78,7 +78,7 @@ class Email:
         
         try:
             return WebDriverWait(self._driver, self.TIMEOUT).until(
-                EC.presence_of_element_located(selector)
+                EC.element_to_be_clickable(selector)
             )
         except TimeoutException:
             print('Can not find close modal button')
@@ -94,7 +94,7 @@ class Email:
 
         try:
             return WebDriverWait(self._driver, self.TIMEOUT).until(
-                EC.presence_of_element_located(selector)
+                EC.visibility_of_element_located(selector)
             )
         except TimeoutException:
             print('Can not find email element')

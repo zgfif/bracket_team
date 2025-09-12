@@ -22,27 +22,27 @@ class Event:
 
 
 
-    def extract(self) -> dict:
+    def extract(self) -> tuple:
         """
-        Open the page and extracts data.
+        Open the page and extracts data as tuple.
         """
         if not self._event_link:
-            print('No event link. So return empty dict.')
-            return {}
+            print('No event link. So return empty tuple.')
+            return ()
         
         name = self._extract_name()
         
         if not self._open_link():
-            print('can not open event. return an empty dict')
-            return {}
+            print('can not open event. return an empty tuple')
+            return ()
 
-        data = {
-            'id': '',
-            'name': name,
-            'email': self._extract_email(),
-            'sport': self._extract_sport(),
-            'location': self._extract_location(),
-        }
+        data = (
+            '',
+            name,
+            self._extract_email(),
+            self._extract_sport(),
+            self._extract_location(),
+        )
 
         sleep(3)
         
