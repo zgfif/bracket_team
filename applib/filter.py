@@ -3,15 +3,21 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from logging import Logger
 from time import sleep
+from applib.filters.by_published import ByPublished
+from applib.filters.by_sport import BySport
+from applib.filters.by_start_date import ByStartDate
+from applib.filters.by_end_date import ByEndDate
 
 
 
 class Filter:
     TIMEOUT = 10
 
-    def __init__(self, driver: WebDriver) -> None:
+    def __init__(self, driver: WebDriver, logger: Logger) -> None:
         self._driver = driver
+        self._logger = logger
 
 
     def apply(self, 
@@ -29,122 +35,69 @@ class Filter:
             end_date: (str): has format mm/dd/yyyy .
 
         """
-        # open filter menu:
-        mat_expansion_panel_header_element = self._mat_expansion_panel_header_element()
-
-        if not mat_expansion_panel_header_element:
-            return
-                
-        mat_expansion_panel_header_element.click()
-
-        # process published:
-        if not published:
-            published_element = self._published_element()
-            
-            if published_element:
-                sleep(0.5)
-                published_element.click()
-
-        # process sport element:
-        sport_select_element = self._mat_select_element()
+        self._logger.info('Appying filter: published=%s, sport=%s, start_date=%s, end_date=%s...', 
+                          published, sport, start_date, end_date)
         
-        if sport_select_element:
-            sleep(0.5)
-            sport_select_element.click()
-            mat_option = self._mat_option_element(sport=sport)
-            
-            if mat_option:
-                sleep(0.5)
-                mat_option.click()
+        self._open_filter_menu()
+        
+        # Applying filters:
+        ByPublished(driver=self._driver, logger=self._logger).apply(is_published=published)
 
-        # process start date:
-        start_date_element = self._start_date_element()
-        if start_date_element:
-            self._driver.execute_script("arguments[0].removeAttribute('readonly')", start_date_element)
-            sleep(0.5)
-            start_date_element.send_keys(start_date)
+        BySport(driver=self._driver, logger=self._logger).apply(kind_of_sport=sport)
 
-        # process end date:
-        end_date_element = self._end_date_element()
-        if end_date_element:
-            self._driver.execute_script("arguments[0].removeAttribute('readonly')", end_date_element)
-            sleep(0.5)
-            end_date_element.send_keys(end_date)
+        ByStartDate(driver=self._driver, logger=self._logger).apply(date=start_date)
+
+        ByEndDate(driver=self._driver, logger=self._logger).apply(date=end_date)
 
         sleep(10)
-        # click search
+        self._press_search()
+        sleep(10)
+
+
+
+    def _press_search(self) -> None:
+        """
+        Click "Search" button.
+        """
         search_button_element = self._search_button_element()
+        
         if search_button_element:
             sleep(3)
             search_button_element.click()
 
-        sleep(10)
 
 
+    def _open_filter_menu(self) -> None:
+        """
+        Perform opening Filter menu.
+        """
+        mat_expansion_panel_header_element = self._mat_expansion_panel_header_element()
 
-    def _published_element(self) -> WebElement | None:
-        selector = (By.CSS_SELECTOR, 'mat-slide-toggle')
-        
-        try:
-            return WebDriverWait(self._driver, self.TIMEOUT).until(
-                EC.presence_of_element_located(selector)
-            )        
-        except Exception:
-            print('can not find published element')
-            return None
+        if not mat_expansion_panel_header_element:
+            return
+        mat_expansion_panel_header_element.click()
+
 
 
     def _mat_expansion_panel_header_element(self) -> WebElement | None:
+        """
+        Return Mat expansion panel header element. If could not found return None.
+        """
         try:
             return self._driver.find_element(By.CSS_SELECTOR, 'mat-expansion-panel-header')
         except Exception:
-            print('can not find mat-expansion-panel-header')
-            return None
-        
-
-
-    def _mat_select_element(self) -> WebElement | None:
-        try:
-            return self._driver.find_element(By.CSS_SELECTOR, 'mat-select')
-        except Exception:
-            print('can not find mat select element')
-            return None
-
-
-    
-    def _mat_option_element(self, sport: str|None) -> WebElement | None:
-        if not sport:
-            sport = 'None'
-
-        try:
-            return self._driver.find_element(By.XPATH, f"//mat-option[contains(., '{sport}')]")
-        except Exception:
-            print('can not find mat option')
-            return None
-   
-
-
-    def _start_date_element(self) -> WebElement | None:
-        try:
-            return self._driver.find_element(By.CSS_SELECTOR, 'input[name="startDate"]')
-        except Exception:
-            print('can not found start date element.')
-            return None
-
-
-
-    def _end_date_element(self) -> WebElement | None:
-        try:
-            return self._driver.find_element(By.CSS_SELECTOR, 'input[name="endDate"]')
-        except Exception:
-            print('can not found end date element.')
+            self._logger.warning('Could not found mat-expansion-panel-header. Return None.')
             return None
 
 
 
     def _search_button_element(self) -> WebElement | None:
+        """
+        Return Search button element. If could not found return None.
+        """
         try:
             return self._driver.find_element(By.XPATH, f"//button[contains(., 'Search')]")
         except Exception:
-            print('can not find mat select element')
+            self._logger.warning('Could not found Search button element. Return None.')
             return None
+        

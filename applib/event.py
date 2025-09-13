@@ -9,6 +9,8 @@ from applib.extracting.name import Name
 from applib.extracting.email import Email
 from applib.extracting.sport import Sport
 from applib.extracting.location import Location
+from logging import Logger
+
 
 
 
@@ -16,9 +18,10 @@ class Event:
     TIMEOUT = 10
 
 
-    def __init__(self, driver: WebDriver, event_link: WebElement)  -> None:
+    def __init__(self, driver: WebDriver, event_link: WebElement, logger: Logger)  -> None:
         self._driver = driver
         self._event_link = event_link
+        self._logger = logger
 
 
 
@@ -27,13 +30,13 @@ class Event:
         Open the page and extracts data as tuple.
         """
         if not self._event_link:
-            print('No event link. So return empty tuple.')
+            self._logger.warning('No event link. So return empty tuple.')
             return ()
         
         name = self._extract_name()
         
         if not self._open_link():
-            print('can not open event. return an empty tuple')
+            self._logger.warning('can not open event. return an empty tuple')
             return ()
 
         data = (
@@ -56,13 +59,13 @@ class Event:
 
     def _open_link(self) -> bool:
         """
-        Open the link.
+        Open the link. If open link return True. If could not open - False.
         """
         try:
             self._event_link.click()
             return True
         except Exception:
-            print('can not open the link')
+            self._logger.warning('can not open the link.')
             return False
         
 
@@ -112,8 +115,7 @@ class Event:
             self._driver.execute_script("window.scrollTo(0, 0);")
             back_button_element.click()
         except Exception:
-            print('can not click back button')
-            return
+            self._logger.warning('can not click back button')
 
 
 
@@ -128,7 +130,6 @@ class Event:
                 EC.presence_of_element_located(selector)
             )
         except TimeoutException:
-            print('Could not found back button element.')
-            return None
+            self._logger.warning('Could not found back button element.')
 
             

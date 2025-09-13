@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from time import sleep
 from applib.page import Page
 from applib.xlsx_file import XlsxFile
+from logging import Logger
 
 
 
@@ -15,10 +16,11 @@ from applib.xlsx_file import XlsxFile
 class PassPages:
     TIMEOUT = 10
 
-    def __init__(self, driver: WebDriver, tabname: str) -> None:
+    def __init__(self, driver: WebDriver, tabname: str, logger: Logger, filepath: str = 'total_12312024_12302025.xlsx') -> None:
         self._driver = driver
         self._tabname = tabname
-
+        self._logger = logger
+        self._filepath = filepath
 
 
     def perform(self) -> None:
@@ -28,7 +30,7 @@ class PassPages:
         pages_count_element = self._pages_count_element()
         
         if not pages_count_element:
-            print('can not find page count element. Stop processing')
+            self._logger.warning('can not find page count element. Stop processing')
             return
         
         pages_count = int(pages_count_element.text.split()[-1])
@@ -36,23 +38,24 @@ class PassPages:
         for i in range(pages_count):
             sleep(10)
 
-            print(f'Processing {i+1} page...')
+            self._logger.info(f'Processing {i+1} page...')
 
-            data = Page(self._driver).process()
+            data = Page(driver=self._driver, logger=self._logger).process()
 
             print(data)
             # add data to file
-            XlsxFile('live_and_upcoming.xlsx').add_rows(data)
+            XlsxFile(self._filepath).add_rows(data)
             
             next_page_button_element = self._next_page_button_element()
 
             if not next_page_button_element:
-                print('can not find next page button element. Stop changing pages.')
+                self._logger.warning('Could not found \'next page button\' element. Stop changing pages.')
                 return
 
             next_page_button_element.click()
-
-        print(f'Congratulations! We have finished processing the tab \'{self._tabname}\'')
+        
+        self._logger.info('-----' * 5)
+        self._logger.info('Congratulations! We have finished processing the \'%s\' tab.', self._tabname)
 
 
 
@@ -61,13 +64,13 @@ class PassPages:
         Return pages count element. If could not found return None.
         """
         selector = (By.XPATH, '/html/body/app-root/app-events/section/div/div/app-pagination/div/div[1]/p[2]')
+
         try:
             return WebDriverWait(self._driver, self.TIMEOUT).until(
                 EC.presence_of_element_located(selector)
             )
         except TimeoutException:
-            print('Could not found pages count element')
-            return
+            self._logger.warning('Could not found pages count element.')
         
 
 
@@ -76,10 +79,10 @@ class PassPages:
         Return next page button element. If could not found return None.
         """
         selector = (By.XPATH, '/html/body/app-root/app-events/section/div/div/app-pagination/div/div[1]/button[2]')
+        
         try:
             return WebDriverWait(self._driver, self.TIMEOUT).until(
                 EC.presence_of_element_located(selector)
             )
         except TimeoutException:
-            print('Could not found next page button element')
-            return
+            self._logger.warning('Could not found next page button element.')

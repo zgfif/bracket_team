@@ -6,14 +6,17 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from logging import Logger
+
 
 
 
 class Page:
     TIMEOUT = 10
 
-    def __init__(self, driver: WebDriver) -> None:
+    def __init__(self, driver: WebDriver, logger: Logger) -> None:
         self._driver = driver
+        self._logger = logger
 
 
 
@@ -25,15 +28,17 @@ class Page:
         
         events_links = self._events_links_elements()
 
-        for i in range(len(events_links)):
-            n = i + 1
-            nth_event_link_element = self._nth_event_link_element(n)
+        if not events_links:
+            return tuple(data)
+
+        for i in range(1, len(events_links) + 1):
+            nth_event_link_element = self._nth_event_link_element(i)
             
             if not nth_event_link_element:
-                print('could not found event link element. Stop extraction.')
+                self._logger.warning('could not found event link element. Stop extraction from this page.')
                 return tuple(data)
 
-            print(f'start processing {n} event...')
+            self._logger.info(f'start processing {i} event...')
             event_data = self._process_event_link(nth_event_link_element)
 
             data.append(event_data)
@@ -53,18 +58,18 @@ class Page:
                 EC.presence_of_all_elements_located(selector)
             )
         except TimeoutException:
-            print('can not find any links on events')
+            self._logger.info('Could not found any links on events.')
             return tuple()
             
         return tuple(events_links)
 
 
 
-    def _process_event_link(self, event_link: WebElement)  -> dict:
+    def _process_event_link(self, event_link: WebElement)  -> tuple:
         """
         Return a dict which contains event data (name, email, sport, location).
         """
-        return Event(driver=self._driver, event_link=event_link).extract()
+        return Event(driver=self._driver, event_link=event_link, logger=self._logger).extract()
 
 
 
@@ -79,6 +84,6 @@ class Page:
                 EC.presence_of_element_located(selector)
             )
         except TimeoutException:
-            print(f'Could not found {n}th element.')
+            self._logger.warning(f'Could not found {n}th element.')
         return None
 
