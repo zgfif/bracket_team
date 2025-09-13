@@ -44,7 +44,6 @@ class BySport:
             return self._driver.find_element(By.CSS_SELECTOR, 'mat-select')
         except Exception:
             self._logger.warning('Could not found mat select element. Return None.')
-            return None
 
 
     
@@ -59,5 +58,4 @@ class BySport:
             return self._driver.find_element(By.XPATH, f"//mat-option[contains(., '{sport}')]")
         except Exception:
             self._logger.warning('Could not found mat option with \'%s\'. Return None.', sport)
-            return None
    

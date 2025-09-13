@@ -8,11 +8,10 @@ class TestFilter(unittest.TestCase):
     def test_apply_filter(self):
 
         events = Events()
-        events.open()
 
         Filter(driver=events.driver, logger=events.logger).apply(
             published=False, 
             sport='Soccer', 
-            start_date='12/31/2024', 
-            end_date='12/30/2025',
+            start_date='12/01/2024', 
+            end_date='12/09/2025',
         )

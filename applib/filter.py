@@ -12,12 +12,15 @@ from applib.filters.by_end_date import ByEndDate
 
 
 
+
+
 class Filter:
     TIMEOUT = 10
 
     def __init__(self, driver: WebDriver, logger: Logger) -> None:
         self._driver = driver
         self._logger = logger
+
 
 
     def apply(self, 
@@ -46,12 +49,12 @@ class Filter:
         BySport(driver=self._driver, logger=self._logger).apply(kind_of_sport=sport)
 
         ByStartDate(driver=self._driver, logger=self._logger).apply(date=start_date)
-
+        sleep(2)
         ByEndDate(driver=self._driver, logger=self._logger).apply(date=end_date)
 
-        sleep(10)
+        sleep(5)
         self._press_search()
-        sleep(10)
+        sleep(5)
 
 
 
@@ -87,7 +90,6 @@ class Filter:
             return self._driver.find_element(By.CSS_SELECTOR, 'mat-expansion-panel-header')
         except Exception:
             self._logger.warning('Could not found mat-expansion-panel-header. Return None.')
-            return None
 
 
 
@@ -98,6 +100,4 @@ class Filter:
         try:
             return self._driver.find_element(By.XPATH, f"//button[contains(., 'Search')]")
         except Exception:
-            self._logger.warning('Could not found Search button element. Return None.')
-            return None
-        
+            self._logger.warning('Could not found Search button element. Return None.')        
