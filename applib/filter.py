@@ -38,8 +38,7 @@ class Filter:
             end_date: (str): has format mm/dd/yyyy .
 
         """
-        self._logger.info('Appying filter: published=%s, sport=%s, start_date=%s, end_date=%s...', 
-                          published, sport, start_date, end_date)
+        self._logger.info('Appying filters...')
         
         self._open_filter_menu()
         
@@ -49,24 +48,31 @@ class Filter:
         BySport(driver=self._driver, logger=self._logger).apply(kind_of_sport=sport)
 
         ByStartDate(driver=self._driver, logger=self._logger).apply(date=start_date)
+        
         sleep(2)
+
         ByEndDate(driver=self._driver, logger=self._logger).apply(date=end_date)
 
         sleep(5)
+        
         self._press_search()
+        
         sleep(5)
 
 
 
     def _press_search(self) -> None:
         """
-        Click "Search" button.
+        Click on "Search" button.
         """
         search_button_element = self._search_button_element()
         
-        if search_button_element:
-            sleep(3)
-            search_button_element.click()
+        if not search_button_element:
+            return
+
+        sleep(3)
+
+        search_button_element.click()
 
 
 
@@ -78,7 +84,11 @@ class Filter:
 
         if not mat_expansion_panel_header_element:
             return
-        mat_expansion_panel_header_element.click()
+
+        try:
+            mat_expansion_panel_header_element.click()
+        except Exception:
+            self._logger.exception('Could not click on mat_expansion_panel_header.')
 
 
 
@@ -86,8 +96,10 @@ class Filter:
         """
         Return Mat expansion panel header element. If could not found return None.
         """
+        selector = (By.CSS_SELECTOR, 'mat-expansion-panel-header')
+
         try:
-            return self._driver.find_element(By.CSS_SELECTOR, 'mat-expansion-panel-header')
+            return self._driver.find_element(*selector)
         except Exception:
             self._logger.warning('Could not found mat-expansion-panel-header. Return None.')
 
@@ -97,7 +109,9 @@ class Filter:
         """
         Return Search button element. If could not found return None.
         """
+        selector = (By.XPATH, f"//button[contains(., 'Search')]")
+
         try:
-            return self._driver.find_element(By.XPATH, f"//button[contains(., 'Search')]")
+            return self._driver.find_element(*selector)
         except Exception:
             self._logger.warning('Could not found Search button element. Return None.')        

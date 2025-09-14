@@ -22,20 +22,27 @@ class ByPublished:
         """
         Apply filter "published" True or False.
         """
+        self._logger.info('Appying filter is published: \'%s\'...', is_published)
+
         
         # Default state is "published". So we click only if is_published - False.
-        if not is_published:
-            published_element = self._published_element()
-            
-            if published_element:
-                sleep(0.5)
-                published_element.click()
+        if is_published:
+            return
 
-    
-    
+        published_element = self._published_element()
+        
+        if not published_element:
+            return
+        
+        sleep(0.5)
+        
+        published_element.click()
+
+
+
     def _published_element(self) -> WebElement | None:
         """
-        Retunr published element. If could not found return None.
+        Return published element. If could not found return None.
         """
         selector = (By.CSS_SELECTOR, 'mat-slide-toggle')
         

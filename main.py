@@ -12,8 +12,8 @@ def main():
     Filter(driver=events.driver, logger=events.logger).apply(
         published=True, 
         sport=None, 
-        start_date='9/1/2025', 
-        end_date='9/30/2025',
+        start_date='09/01/2025', 
+        end_date='09/30/2025',
         )
     
     PassPages(driver=events.driver, 

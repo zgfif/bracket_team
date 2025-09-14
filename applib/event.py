@@ -131,5 +131,4 @@ class Event:
             )
         except TimeoutException:
             self._logger.warning('Could not found back button element.')
-
             

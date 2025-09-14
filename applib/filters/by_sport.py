@@ -20,42 +20,60 @@ class BySport:
     
     def apply(self, kind_of_sport: str | None = None) -> None:
         """
-        Apply filter "published" True or False.
+        Apply filter "sport".
         """
-                # process sport element:
-        sport_select_element = self._mat_select_element()
-        
-        if sport_select_element:
-            sleep(0.5)
-            sport_select_element.click()
-            mat_option = self._mat_option_element(sport=kind_of_sport)
-            
-            if mat_option:
-                sleep(0.5)
-                mat_option.click()
+        self._logger.info('Appying filter by kind of sport: \'%s\'...', kind_of_sport)
 
+        sport_select_element = self._sport_select_element()
 
+        if not sport_select_element:
+            return
 
-    def _mat_select_element(self) -> WebElement | None:
-        """
-        Return Mat select element. If could not found return None.
-        """
+        sleep(0.5)
+
         try:
-            return self._driver.find_element(By.CSS_SELECTOR, 'mat-select')
+            sport_select_element.click()
         except Exception:
-            self._logger.warning('Could not found mat select element. Return None.')
+            self._logger.exception('Could not click on sport_select element. Stop applying filter sport.')
+            return
+
+        sport_option_element = self._sport_option_element(kind_of_sport=kind_of_sport)
+        
+        if not sport_option_element:
+            return
+        
+        sleep(0.5)
+
+        try:
+            sport_option_element.click()
+        except Exception:
+            self._logger.exception('Could not click on sport_option element. Stop applying filter sport.')
+            return
+
+
+
+    def _sport_select_element(self) -> WebElement | None:
+        """
+        Return Sport select element. If could not found return None.
+        """
+        selector = (By.CSS_SELECTOR, 'mat-select')
+
+        try:
+            return self._driver.find_element(*selector)
+        except Exception:
+            self._logger.warning('Could not found sport select element. Return None.')
 
 
     
-    def _mat_option_element(self, sport: str|None) -> WebElement | None:
+    def _sport_option_element(self, kind_of_sport: str|None) -> WebElement | None:
         """
-        Return Mat option element with with specific Text. If could not fount return None.
+        Return Sport option element with with specific Text. If could not fount return None.
         """
-        if not sport:
-            sport = 'None'
+        sport = str(kind_of_sport)
+
+        selector = (By.XPATH, f"//mat-option[contains(., '{sport}')]")
 
         try:
-            return self._driver.find_element(By.XPATH, f"//mat-option[contains(., '{sport}')]")
+            return self._driver.find_element(*selector)
         except Exception:
-            self._logger.warning('Could not found mat option with \'%s\'. Return None.', sport)
-   
+            self._logger.warning('Could not found sport option with \'%s\'. Return None.', sport)
