@@ -16,9 +16,9 @@ class GoPages:
         total_events_urls = []
 
         page_dct = PageJson().retrieve(page_number=1, 
-                                       type='live_and_upcoming', 
-                                       start_date='2025-09-01', 
-                                       end_date='2025-09-30')
+                                       type=self._type, 
+                                       start_date=self._start_date, 
+                                       end_date=self._end_date)
 
         rp = ResponseExtracting(data=page_dct)
 
@@ -40,9 +40,9 @@ class GoPages:
         for page_number in rp._pages_list[1:]:
             page_dct = PageJson().retrieve(
                 page_number=page_number, 
-                type='live_and_upcoming', 
-                start_date='2025-09-01',
-                end_date='2025-09-30'
+                type=self._type, 
+                start_date=self._start_date,
+                end_date=self._end_date,
                 )
 
             rp = ResponseExtracting(data=page_dct)

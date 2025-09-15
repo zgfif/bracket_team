@@ -4,6 +4,8 @@ from applib.event_url import EventUrl
 from applib.extract_data import ExtractData
 from applib.xlsx_file import XlsxFile
 
+
+
 class TestGoPages(unittest.TestCase):
     def test_go_all_pages(self):
         live_and_upcoming_events_urls = GoPages().perform()
