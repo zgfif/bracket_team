@@ -8,7 +8,7 @@ from logging import Logger as InitialLogger
 
 
 
-class EventUrl:
+class Browser:
     def __init__(self) -> None:
         """
         Configure Chrome.

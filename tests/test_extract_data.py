@@ -1,6 +1,6 @@
 import unittest
-from applib.extract_data import ExtractData
-from applib.event_url import EventUrl
+from applib.event_data import ExtractData
+from applib.browser import EventUrl
 
 
 

@@ -1,5 +1,5 @@
 import unittest
-from applib.event_url import EventUrl
+from applib.browser import EventUrl
 
 
 

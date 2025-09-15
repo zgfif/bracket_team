@@ -1,21 +1,21 @@
+from selenium.webdriver.chrome.webdriver import WebDriver
+from applib.extracting.name import Name
 from applib.extracting.email import Email
 from applib.extracting.sport import Sport
 from applib.extracting.location import Location
-from selenium.webdriver.chrome.webdriver import WebDriver
-from applib.extracting.name import Name
 
 
 
 
-class ExtractData:
+class EventData:
     def __init__(self, driver: WebDriver) -> None:
         self._driver = driver
 
 
     
-    def perform(self) -> tuple:
+    def extract(self) -> tuple:
         """
-        Return tuple with id, name, email, sport and location.
+        Return tuple with id, name, email, sport and location of the specific event.
         """
         return (
             '',

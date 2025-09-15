@@ -2,12 +2,12 @@ import requests
 
 
 
-class PageJson:
+class PageData:
     def __init__(self) -> None:
         pass
 
 
-    def retrieve(self, 
+    def extract(self, 
                 type: str = 'live_and_upcoming',
                 page_number: int = 1, 
                 start_date: str ='2025-09-01', 
