@@ -8,11 +8,11 @@ from logging import Logger as InitialLogger
 
 
 
-class Events:
-    URL = 'https://bracketteam.com/events'
-
-
+class EventUrl:
     def __init__(self) -> None:
+        """
+        Configure Chrome.
+        """
         self._driver = webdriver.Chrome(options=ChromeOptions().setup())
         self._logger = Logger().setup()
         
@@ -20,22 +20,31 @@ class Events:
             "Page.addScriptToEvaluateOnNewDocument",
             {"source": "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"}
         )
-        self._logger.info('Openning page...')
-        self._driver.get(self.URL)
 
 
 
-    def open(self) -> None:
+    def open(self, url: str) -> None:
+        """
+        Open the page by url.
+        """
+        self._logger.info(f'Start processing page {url} ...')
+        self._driver.get(url)
         sleep(5)
 
 
 
     @property
     def driver(self) -> WebDriver:
+        """
+        Return the driver. Used to extract data.
+        """
         return self._driver
 
 
 
     @property
     def logger(self) -> InitialLogger:
+        """
+        Return the logger.
+        """
         return self._logger

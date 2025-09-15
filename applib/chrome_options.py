@@ -1,12 +1,18 @@
 from selenium.webdriver.chrome.options import Options
 
 
+
+
 class ChromeOptions:
     def __init__(self) -> None:
         self.options = Options()
 
 
+
     def setup(self) -> Options:
+        """
+        Setup options for Google Chrome.
+        """
         self.options.add_argument("--disable-blink-features=AutomationControlled")
         self.options.add_experimental_option("excludeSwitches", ["enable-automation"])
         self.options.add_experimental_option('useAutomationExtension', False)
@@ -15,4 +21,3 @@ class ChromeOptions:
             )
 
         return self.options
-

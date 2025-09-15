@@ -66,7 +66,6 @@ class Email:
             )
         except TimeoutException:
             print('Can not find email button element')
-            return None
 
 
 
@@ -82,7 +81,6 @@ class Email:
             )
         except TimeoutException:
             print('Can not find close modal button')
-            return None
 
 
     
@@ -98,4 +96,3 @@ class Email:
             )
         except TimeoutException:
             print('Can not find email element')
-            return None
