@@ -3,56 +3,31 @@ from applib.extracting.name import Name
 from applib.extracting.email import Email
 from applib.extracting.sport import Sport
 from applib.extracting.location import Location
-
+from logging import Logger
 
 
 
 class EventData:
-    def __init__(self, driver: WebDriver) -> None:
+    def __init__(self, driver: WebDriver, logger: Logger) -> None:
         self._driver = driver
-
+        self._logger = logger
 
     
-    def extract(self) -> tuple:
+    def extract(self) -> dict:
         """
         Return tuple with id, name, email, sport and location of the specific event.
         """
-        return (
-            '',
-            self._extract_name(),
-            self._extract_email(),
-            self._extract_sport(),
-            self._extract_location(),
-        )
-    
+        return {
+            'name': self._safe_extract(Name),
+            'email': self._safe_extract(Email),
+            'sport': self._safe_extract(Sport),
+            'location': self._safe_extract(Location),
+        }
 
 
-    def _extract_name(self) -> str:
-        """
-        Return name of event.
-        """
-        return Name(driver=self._driver).extract()
-
-
-
-    def _extract_email(self) -> str:
-        """
-        Return the email of event.
-        """
-        return Email(driver=self._driver).extract()
-
-
-
-    def _extract_sport(self) -> str:
-        """
-        Return the kind of sport of event.
-        """
-        return Sport(driver=self._driver).extract() 
-
-
-
-    def _extract_location(self) -> str:
-        """
-        Return the location of event.
-        """
-        return Location(driver=self._driver).extract()
+    def _safe_extract(self, extractor_cls) -> str:
+        try:
+            return extractor_cls(driver=self._driver).extract()
+        except Exception:
+            self._logger.exception('Could not extract %s', extractor_cls)
+            return ''

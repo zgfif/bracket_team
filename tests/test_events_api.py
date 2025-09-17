@@ -1,10 +1,10 @@
 import unittest
-from applib.page_data import PageData
+from applib.events_api import EventsApi
 
 
-class TestPageResponse(unittest.TestCase):
+class TestEventsApi(unittest.TestCase):
     def test_get_first_page(self):
-        data = PageData().extract()
+        data = EventsApi().fetch_page_data()
         
         print(data)
         

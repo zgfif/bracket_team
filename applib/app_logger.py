@@ -5,24 +5,30 @@ import sys
 
 
 
-class Logger:
-    def __init__(self, logpath: str = 'logs/app.log') -> None:
+class AppLogger:
+    def __init__(self, logpath: str = 'logs/app.log', level: int = logging.INFO) -> None:
         self._logpath = logpath
-        
+        self._level = level
         self._prepare_logpath()
+
+        self._formatter = logging.Formatter(
+            fmt="%(asctime)s - %(levelname)s - %(message)s", 
+            style="%",
+        )
+        
     
 
 
-    def setup(self) -> logging.Logger:
+    def setup(self, name: str = '') -> logging.Logger:
         """
         Return logger which saves logs to file and prints in console.
         """
-        logger = logging.getLogger(__name__)
-
-        logger.setLevel(level=logging.INFO)
-
-        for handler in [self._file_handler(), self._console_handler()]:
-            logger.addHandler(handler)
+        logger = logging.getLogger(name or __name__)
+        logger.setLevel(level=self._level)
+        
+        if not logger.handlers:
+            for handler in self._file_handler(), self._console_handler():
+                logger.addHandler(handler)
 
         return logger
 
@@ -36,26 +42,15 @@ class Logger:
 
 
 
-    def _formatter(self) -> logging.Formatter:
-        """
-        Return formatter for logs.
-        """
-        return logging.Formatter(
-            fmt="%(asctime)s - %(levelname)s - %(message)s",
-            style="%",
-        )
-
-
-
     def _file_handler(self) -> logging.FileHandler:
         """
         Return configured file handler.
         """
         file_handler = logging.FileHandler(self._logpath, mode='a', encoding='UTF-8')
 
-        file_handler.setFormatter(self._formatter())
+        file_handler.setFormatter(self._formatter)
 
-        file_handler.setLevel(level=logging.INFO)
+        file_handler.setLevel(level=self._level)
         
         return file_handler
     
@@ -67,8 +62,8 @@ class Logger:
         """
         console_handler = logging.StreamHandler(stream=sys.stdout)
 
-        console_handler.setFormatter(self._formatter())
+        console_handler.setFormatter(self._formatter)
 
-        console_handler.setLevel(level=logging.INFO)
+        console_handler.setLevel(level=self._level)
 
         return console_handler

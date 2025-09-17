@@ -21,7 +21,7 @@ class TestXlsxFile(unittest.TestCase):
 
     def test_insert_row_to_in_the_start_of_file(self):
         filename = 'tests/test2.xlsx'
-        columns = ('id', 'name', 'email', 'sport', 'location',)
+        columns = ('name', 'email', 'sport', 'location',)
 
         file = XlsxFile(filename)
         file.add_row(items=columns, row_number=1)
@@ -67,7 +67,7 @@ class TestXlsxFile(unittest.TestCase):
     def test_insert_row_to_in_the_end_of_unexisting_file(self):
         filename = 'tests/unexisting_file.xlsx'
         
-        columns = ('id', 'name', 'email', 'sport', 'location',)
+        columns = ('name', 'email', 'sport', 'location',)
         
         row = (
             3, 
@@ -100,7 +100,7 @@ class TestXlsxFile(unittest.TestCase):
 
     
     def test_add_rows_to_unexisting_file(self):
-        columns = ('id', 'name', 'email', 'sport', 'location',)
+        columns = ('name', 'email', 'sport', 'location',)
 
         events = (
             ('', 'Throwback Sunday', 'baseballforeveroc@gmail.com', 'BASEBALL', 'Long Beach, Ca, USA'), 
@@ -137,7 +137,7 @@ class TestXlsxFile(unittest.TestCase):
 
 
     def test_add_rows_to_existing_file(self):
-        columns = ('id', 'name', 'email', 'sport', 'location',)
+        columns = ('name', 'email', 'sport', 'location',)
 
         events = (
             ('', 'Throwback Sunday', 'baseballforeveroc@gmail.com', 'BASEBALL', 'Long Beach, Ca, USA'), 

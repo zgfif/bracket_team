@@ -1,5 +1,5 @@
 import unittest
-from applib.logger import Logger
+from applib.app_logger import AppLogger
 import os
 
 
@@ -12,7 +12,7 @@ class TestLogger(unittest.TestCase):
         
         self.assertFalse(os.path.exists(logpath))
 
-        logger = Logger(logpath=logpath).setup()
+        logger = AppLogger(logpath=logpath).setup()
 
         logger.info(log_message)
 

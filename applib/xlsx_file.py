@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 class XlsxFile:
-    COLUMN_NAMES = ('id', 'name', 'email', 'sport', 'location',)
+    COLUMN_NAMES = ('name', 'email', 'sport', 'location',)
 
     def __init__(self, filepath: str) -> None:
         self._filepath = filepath
